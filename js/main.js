@@ -9,33 +9,59 @@
   var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ----------------------------------------------------------
-     Photography — hotlinked from the Unsplash CDN per their
-     hotlinking guidelines. Candidates are tried in order; if
-     every candidate fails the section keeps its gradient plate.
-     To art-direct a section, edit its list here.
+     Imagery — candidates are tried in order; if every candidate
+     fails the section keeps its gradient plate. To art-direct a
+     section, edit its list here.
+
+     Primary: bespoke images generated with Higgsfield (Soul v2),
+     art-directed to the catalog's dark tonal palette. `src` feeds
+     the plate, `backdrop` (lightweight webp) feeds the blurred
+     full-bleed layer. Fallbacks: Unsplash CDN hotlinks, then the
+     tonal gradient.
      ---------------------------------------------------------- */
+  var HF = "https://d8j0ntlcm91z4.cloudfront.net/user_3D4FWlRHKNDsjbcrqPS1P5WL27Z/";
   var IMG_PARAMS = "auto=format&fit=crop&q=80&w=1600";
+
+  function hf(file) {
+    return {
+      src: HF + file + ".png",
+      backdrop: HF + file + "_min.webp",
+      credit: "Imagery — Higgsfield AI",
+    };
+  }
+  function un(idOrUrl) {
+    var url = idOrUrl.indexOf("http") === 0
+      ? idOrUrl
+      : "https://images.unsplash.com/" + idOrUrl + "?" + IMG_PARAMS;
+    return { src: url, backdrop: url, credit: "Photograph — Unsplash" };
+  }
+
   var PHOTOS = {
     kyoto: [
-      "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?" + IMG_PARAMS,
-      "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?" + IMG_PARAMS,
+      hf("hf_20260704_013325_60ce4bf9-3cff-4345-ad19-47f1e1761fc3"),
+      un("photo-1545569341-9eb8b30979d9"),
+      un("photo-1493976040374-85c8e12f0c0e"),
     ],
     manarola: [
-      "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?" + IMG_PARAMS,
+      hf("hf_20260704_013327_be51dc35-a4a9-4dc8-857e-077794229345"),
+      un("photo-1516483638261-f4dbaf036963"),
     ],
     merzouga: [
-      "https://unsplash.com/photos/PV1Y6JdSNzo/download?force=true&w=1600",
-      "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?" + IMG_PARAMS,
-      "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?" + IMG_PARAMS,
+      hf("hf_20260704_013329_1dc03b37-5159-4343-a662-6adcc0c3d953"),
+      un("https://unsplash.com/photos/PV1Y6JdSNzo/download?force=true&w=1600"),
+      un("photo-1489749798305-4fea3ae63d43"),
     ],
     lofoten: [
-      "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?" + IMG_PARAMS,
+      hf("hf_20260704_013332_0b45e0de-846d-4e7a-9168-1cd5e74597fd"),
+      un("photo-1531366936337-7c912a4589a7"),
     ],
     cusco: [
-      "https://images.unsplash.com/photo-1526392060635-9d6019884377?" + IMG_PARAMS,
+      hf("hf_20260704_013334_5af3e8d7-a87a-4bf3-9e19-6ce993db6805"),
+      un("photo-1526392060635-9d6019884377"),
     ],
     paris: [
-      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?" + IMG_PARAMS,
+      hf("hf_20260704_013337_3ecaeb4a-4efd-4f63-8c3b-7fd5b2e30c3c"),
+      un("photo-1502602898657-3e91760cbb34"),
     ],
   };
 
@@ -48,9 +74,12 @@
   var root = document.documentElement;
 
   function loadPhoto(panel) {
+    if (panel.dataset.loading) return;
+    panel.dataset.loading = "1";
     var candidates = (PHOTOS[panel.id] || []).slice();
     var photo = panel.querySelector(".panel__photo");
     var backdrop = panel.querySelector(".panel__backdrop-img");
+    var credit = panel.querySelector(".panel__credit");
     if (!photo || !candidates.length) return;
 
     (function tryNext() {
@@ -58,19 +87,36 @@
         panel.classList.add("no-photo");
         return;
       }
-      var url = candidates.shift();
+      var c = candidates.shift();
       var probe = new Image();
       probe.onload = function () {
-        photo.src = url;
-        backdrop.src = url;
+        photo.src = c.src;
+        backdrop.src = c.backdrop || c.src;
+        if (credit && c.credit) credit.textContent = c.credit;
         panel.classList.add("has-photo");
       };
       probe.onerror = tryNext;
-      probe.src = url;
+      probe.src = c.src;
     })();
   }
 
-  panels.forEach(loadPhoto);
+  /* Load the first section immediately; the rest lazily as the
+     reader approaches (the raw plates are heavy). */
+  loadPhoto(panels[0]);
+  var photoObserver = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          loadPhoto(entry.target);
+          photoObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { rootMargin: "200% 0px" }
+  );
+  panels.slice(1).forEach(function (p) {
+    photoObserver.observe(p);
+  });
 
   /* ----------------------------------------------------------
      Split headlines into letters for the staggered rise

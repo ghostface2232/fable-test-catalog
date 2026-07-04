@@ -15,13 +15,16 @@ A high-end travel catalog site. Six places, six moods, one continuous scroll.
 - Dark tonal palette with an animated film-grain overlay
 - Display typography: Fraunces (variable, optical size 144) with Instrument Sans for UI labels — both self-hosted in `assets/fonts/`
 
-## Photography
+## Imagery
 
-Photographs are hotlinked from the Unsplash CDN (per Unsplash's hotlinking
-guidelines). Each section has an ordered candidate list in `js/main.js`
-(`PHOTOS`); if every candidate fails to load, the section falls back to its
-tonal gradient plate and hides the photo credit — the layout never breaks.
-To art-direct a section, replace the URLs in that map.
+Each section's primary image is a bespoke photograph generated with
+Higgsfield (Soul v2, 1536×2048), art-directed to the catalog's dark tonal
+palette — the sharp plate loads the raw PNG while the blurred full-bleed
+backdrop loads the lightweight webp preview. Fallback candidates are
+Unsplash CDN hotlinks, and if every candidate fails the section falls back
+to its tonal gradient plate and hides the credit — the layout never breaks.
+Images load lazily as the reader approaches each section. To art-direct a
+section, edit its candidate list in `js/main.js` (`PHOTOS`).
 
 ## Motion system
 
