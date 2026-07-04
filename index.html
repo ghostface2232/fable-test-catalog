@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MERIDIAN — A Travel Catalog</title>
-  <meta name="description" content="A high-end travel catalog. Six cities, six moods, one continuous scroll." />
+  <meta name="description" content="A high-end travel catalog. Six places, six moods, one continuous scroll." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23d8cdbd' stroke-width='2'/%3E%3Cline x1='16' y1='3' x2='16' y2='29' stroke='%23d8cdbd' stroke-width='2'/%3E%3C/svg%3E" />
   <link rel="preload" href="assets/fonts/fraunces-var.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="css/style.css" />
@@ -41,11 +41,22 @@
     </div>
   </div>
 
+  <!-- Section rail navigation -->
+  <nav class="rail" id="rail" aria-label="Sections"></nav>
+
   <!-- Catalog -->
   <main id="catalog">
 
-    <section class="panel panel--kyoto" id="kyoto" data-place="Kyoto, Japan" aria-label="Kyoto, Japan">
-      <div class="panel__plate" aria-hidden="true"></div>
+    <section class="panel panel--kyoto" id="kyoto"
+             data-place="Kyoto, Japan" data-accent="#c9798f">
+      <div class="panel__backdrop" aria-hidden="true"><img class="panel__backdrop-img" alt="" /></div>
+      <span class="panel__ghost" aria-hidden="true">01</span>
+      <figure class="panel__plate" aria-hidden="true">
+        <div class="panel__plate-clip">
+          <img class="panel__photo" alt="" />
+          <div class="panel__plate-veil"></div>
+        </div>
+      </figure>
       <div class="panel__content">
         <p class="panel__kicker reveal" style="--d: 0">
           <span class="panel__no">N°01</span>
@@ -55,87 +66,133 @@
         <div class="panel__meta">
           <p class="panel__coords reveal" style="--d: 1">35.0116° N — 135.7681° E</p>
           <p class="panel__blurb reveal" style="--d: 2">Two thousand temples under a lacquer sky. Incense, cedar, the hush of a stone garden raked before dawn.</p>
-          <a class="panel__link reveal" style="--d: 3" href="#kyoto">View itinerary<span class="panel__link-arrow" aria-hidden="true">→</span></a>
+          <a class="panel__link reveal" style="--d: 3" href="#kyoto"><span class="panel__link-label">View itinerary</span><span class="panel__link-arrow" aria-hidden="true">→</span></a>
+          <p class="panel__credit reveal" style="--d: 4">Photograph — Unsplash</p>
         </div>
       </div>
     </section>
 
-    <section class="panel panel--marrakech" id="marrakech" data-place="Marrakech, Morocco" aria-label="Marrakech, Morocco">
-      <div class="panel__plate" aria-hidden="true"></div>
+    <section class="panel panel--manarola panel--flip" id="manarola"
+             data-place="Manarola, Italy" data-accent="#8ba3dd">
+      <div class="panel__backdrop" aria-hidden="true"><img class="panel__backdrop-img" alt="" /></div>
+      <span class="panel__ghost" aria-hidden="true">02</span>
+      <figure class="panel__plate" aria-hidden="true">
+        <div class="panel__plate-clip">
+          <img class="panel__photo" alt="" />
+          <div class="panel__plate-veil"></div>
+        </div>
+      </figure>
       <div class="panel__content">
         <p class="panel__kicker reveal" style="--d: 0">
           <span class="panel__no">N°02</span>
-          <span class="panel__country">Morocco</span>
+          <span class="panel__country">Italy</span>
         </p>
-        <h2 class="panel__city" data-fit>Marrakech</h2>
+        <h2 class="panel__city" data-fit>Manarola</h2>
         <div class="panel__meta">
-          <p class="panel__coords reveal" style="--d: 1">31.6295° N — 7.9811° W</p>
-          <p class="panel__blurb reveal" style="--d: 2">The medina hums in ochre and saffron. Follow the call of the souk until the Atlas mountains cut the horizon.</p>
-          <a class="panel__link reveal" style="--d: 3" href="#marrakech">View itinerary<span class="panel__link-arrow" aria-hidden="true">→</span></a>
+          <p class="panel__coords reveal" style="--d: 1">44.1064° N — 9.7276° E</p>
+          <p class="panel__blurb reveal" style="--d: 2">A village stacked like a deck of cards against the cliff. Vineyards above, the Ligurian sea ink-dark below.</p>
+          <a class="panel__link reveal" style="--d: 3" href="#manarola"><span class="panel__link-label">View itinerary</span><span class="panel__link-arrow" aria-hidden="true">→</span></a>
+          <p class="panel__credit reveal" style="--d: 4">Photograph — Unsplash</p>
         </div>
       </div>
     </section>
 
-    <section class="panel panel--reykjavik" id="reykjavik" data-place="Reykjavík, Iceland" aria-label="Reykjavík, Iceland">
-      <div class="panel__plate" aria-hidden="true"></div>
+    <section class="panel panel--merzouga" id="merzouga"
+             data-place="Merzouga, Morocco" data-accent="#d0824a">
+      <div class="panel__backdrop" aria-hidden="true"><img class="panel__backdrop-img" alt="" /></div>
+      <span class="panel__ghost" aria-hidden="true">03</span>
+      <figure class="panel__plate" aria-hidden="true">
+        <div class="panel__plate-clip">
+          <img class="panel__photo" alt="" />
+          <div class="panel__plate-veil"></div>
+        </div>
+      </figure>
       <div class="panel__content">
         <p class="panel__kicker reveal" style="--d: 0">
           <span class="panel__no">N°03</span>
-          <span class="panel__country">Iceland</span>
+          <span class="panel__country">Morocco</span>
         </p>
-        <h2 class="panel__city" data-fit>Reykjavík</h2>
+        <h2 class="panel__city" data-fit>Merzouga</h2>
         <div class="panel__meta">
-          <p class="panel__coords reveal" style="--d: 1">64.1466° N — 21.9426° W</p>
-          <p class="panel__blurb reveal" style="--d: 2">Basalt, steam, and a sun that barely sets. The city glows like an ember at the edge of the North Atlantic.</p>
-          <a class="panel__link reveal" style="--d: 3" href="#reykjavik">View itinerary<span class="panel__link-arrow" aria-hidden="true">→</span></a>
+          <p class="panel__coords reveal" style="--d: 1">31.0994° N — 4.0084° W</p>
+          <p class="panel__blurb reveal" style="--d: 2">Where the road gives out, the Erg Chebbi begins — dunes the color of embers, silence measured in miles.</p>
+          <a class="panel__link reveal" style="--d: 3" href="#merzouga"><span class="panel__link-label">View itinerary</span><span class="panel__link-arrow" aria-hidden="true">→</span></a>
+          <p class="panel__credit reveal" style="--d: 4">Photograph — Unsplash</p>
         </div>
       </div>
     </section>
 
-    <section class="panel panel--cusco" id="cusco" data-place="Cusco, Peru" aria-label="Cusco, Peru">
-      <div class="panel__plate" aria-hidden="true"></div>
+    <section class="panel panel--lofoten panel--flip" id="lofoten"
+             data-place="Lofoten, Norway" data-accent="#7dbcae">
+      <div class="panel__backdrop" aria-hidden="true"><img class="panel__backdrop-img" alt="" /></div>
+      <span class="panel__ghost" aria-hidden="true">04</span>
+      <figure class="panel__plate" aria-hidden="true">
+        <div class="panel__plate-clip">
+          <img class="panel__photo" alt="" />
+          <div class="panel__plate-veil"></div>
+        </div>
+      </figure>
       <div class="panel__content">
         <p class="panel__kicker reveal" style="--d: 0">
           <span class="panel__no">N°04</span>
-          <span class="panel__country">Peru</span>
-        </p>
-        <h2 class="panel__city" data-fit>Cusco</h2>
-        <div class="panel__meta">
-          <p class="panel__coords reveal" style="--d: 1">13.5320° S — 71.9675° W</p>
-          <p class="panel__blurb reveal" style="--d: 2">Inca stone beneath colonial gold, thin air at eleven thousand feet. Every alley climbs toward the Andes.</p>
-          <a class="panel__link reveal" style="--d: 3" href="#cusco">View itinerary<span class="panel__link-arrow" aria-hidden="true">→</span></a>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel panel--positano" id="positano" data-place="Positano, Italy" aria-label="Positano, Italy">
-      <div class="panel__plate" aria-hidden="true"></div>
-      <div class="panel__content">
-        <p class="panel__kicker reveal" style="--d: 0">
-          <span class="panel__no">N°05</span>
-          <span class="panel__country">Italy</span>
-        </p>
-        <h2 class="panel__city" data-fit>Positano</h2>
-        <div class="panel__meta">
-          <p class="panel__coords reveal" style="--d: 1">40.6281° N — 14.4850° E</p>
-          <p class="panel__blurb reveal" style="--d: 2">A village stacked like a deck of cards against the cliff. Lemon groves above, the Tyrrhenian ink-dark below.</p>
-          <a class="panel__link reveal" style="--d: 3" href="#positano">View itinerary<span class="panel__link-arrow" aria-hidden="true">→</span></a>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel panel--lofoten" id="lofoten" data-place="Lofoten, Norway" aria-label="Lofoten, Norway">
-      <div class="panel__plate" aria-hidden="true"></div>
-      <div class="panel__content">
-        <p class="panel__kicker reveal" style="--d: 0">
-          <span class="panel__no">N°06</span>
           <span class="panel__country">Norway</span>
         </p>
         <h2 class="panel__city" data-fit>Lofoten</h2>
         <div class="panel__meta">
           <p class="panel__coords reveal" style="--d: 1">68.2094° N — 13.6090° E</p>
           <p class="panel__blurb reveal" style="--d: 2">Granite peaks rise straight from the sea. In winter the sky ripples green; in summer it never goes dark.</p>
-          <a class="panel__link reveal" style="--d: 3" href="#lofoten">View itinerary<span class="panel__link-arrow" aria-hidden="true">→</span></a>
+          <a class="panel__link reveal" style="--d: 3" href="#lofoten"><span class="panel__link-label">View itinerary</span><span class="panel__link-arrow" aria-hidden="true">→</span></a>
+          <p class="panel__credit reveal" style="--d: 4">Photograph — Unsplash</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel panel--cusco" id="cusco"
+             data-place="Cusco, Peru" data-accent="#c8a04e">
+      <div class="panel__backdrop" aria-hidden="true"><img class="panel__backdrop-img" alt="" /></div>
+      <span class="panel__ghost" aria-hidden="true">05</span>
+      <figure class="panel__plate" aria-hidden="true">
+        <div class="panel__plate-clip">
+          <img class="panel__photo" alt="" />
+          <div class="panel__plate-veil"></div>
+        </div>
+      </figure>
+      <div class="panel__content">
+        <p class="panel__kicker reveal" style="--d: 0">
+          <span class="panel__no">N°05</span>
+          <span class="panel__country">Peru</span>
+        </p>
+        <h2 class="panel__city" data-fit>Cusco</h2>
+        <div class="panel__meta">
+          <p class="panel__coords reveal" style="--d: 1">13.5320° S — 71.9675° W</p>
+          <p class="panel__blurb reveal" style="--d: 2">Inca stone beneath colonial gold, thin air at eleven thousand feet. Every alley climbs toward the citadel.</p>
+          <a class="panel__link reveal" style="--d: 3" href="#cusco"><span class="panel__link-label">View itinerary</span><span class="panel__link-arrow" aria-hidden="true">→</span></a>
+          <p class="panel__credit reveal" style="--d: 4">Photograph — Unsplash</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel panel--paris panel--flip" id="paris"
+             data-place="Paris, France" data-accent="#c8b07a">
+      <div class="panel__backdrop" aria-hidden="true"><img class="panel__backdrop-img" alt="" /></div>
+      <span class="panel__ghost" aria-hidden="true">06</span>
+      <figure class="panel__plate" aria-hidden="true">
+        <div class="panel__plate-clip">
+          <img class="panel__photo" alt="" />
+          <div class="panel__plate-veil"></div>
+        </div>
+      </figure>
+      <div class="panel__content">
+        <p class="panel__kicker reveal" style="--d: 0">
+          <span class="panel__no">N°06</span>
+          <span class="panel__country">France</span>
+        </p>
+        <h2 class="panel__city" data-fit>Paris</h2>
+        <div class="panel__meta">
+          <p class="panel__coords reveal" style="--d: 1">48.8566° N — 2.3522° E</p>
+          <p class="panel__blurb reveal" style="--d: 2">Zinc rooftops and river light. The city rehearses its evening the way it has for two hundred years.</p>
+          <a class="panel__link reveal" style="--d: 3" href="#paris"><span class="panel__link-label">View itinerary</span><span class="panel__link-arrow" aria-hidden="true">→</span></a>
+          <p class="panel__credit reveal" style="--d: 4">Photograph — Unsplash</p>
         </div>
       </div>
     </section>
