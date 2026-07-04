@@ -330,7 +330,7 @@ body {
   white-space: nowrap;
   color: var(--ink);
   text-shadow: 0 2px 60px rgba(8, 7, 9, 0.45);
-  font-size: 9.5rem;
+  font-size: 17.1rem;
   cursor: default;
 }
 
@@ -364,10 +364,10 @@ body {
   gap: 0.9rem;
   max-width: 34em;
   padding-inline: 1.5rem;
-  translate: 7vw 0;
+  translate: 0 0;
 }
 .panel--flip .panel__meta {
-  translate: -7vw 0;
+  translate: 0 0;
 }
 
 /* thin accent rule draws in above the coordinates */
@@ -396,6 +396,7 @@ body {
   font-size: clamp(0.95rem, 1.35vw, 1.2rem);
   line-height: 1.55;
   color: var(--ink-dim);
+  text-align: center;
   text-shadow: 0 1px 30px rgba(8, 7, 9, 0.6);
 }
 
