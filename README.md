@@ -4,10 +4,10 @@ A high-end travel catalog site. Six places, six moods, one continuous scroll.
 
 ## Structure
 
-- Vertical scroll-snap: every section is a full-viewport (`100svh`) panel, one country per section
+- Pinned cover-scroll: every section is a full-viewport (`100svh`) panel pinned inside a taller wrapper — after docking it holds for a beat (the page stands still while the imagery drifts and slowly swells inside its frame), then the next panel slides up at scroll speed and covers it while the covered panel rises away at a fraction of that speed
 - Four photographic layers per panel: a blurred full-bleed backdrop, a ghost index numeral, an offset photo plate (alternating left/right), and the content stack — all drifting at different rates
-- Oversized city-name headline fitted to 80% of the viewport width, layered over the plate it slightly overlaps
-- On snap entry: the plate opens with a `clip-path` reveal, the photo settles from a slow Ken Burns zoom, and the headline rises letter by letter with a staggered, slightly overshooting ease; kicker, coordinates, blurb, and link follow
+- Oversized city-name headline at one fixed size shared by every destination, layered over the plate it slightly overlaps
+- On entry: the plate opens with a `clip-path` reveal, the photo settles from a slow Ken Burns zoom, and the headline rises letter by letter with a staggered, slightly overshooting ease; kicker, coordinates, blurb, and link follow
 - Current-section indicator at bottom right: rolling counter, progress rule, and place label, tinted with the active section's accent
 - Rail navigation on the right edge (hover reveals labels, click to jump), plus arrow-key navigation
 - Pointer + scroll parallax driven by a single lerped `requestAnimationFrame` loop
@@ -19,7 +19,7 @@ A high-end travel catalog site. Six places, six moods, one continuous scroll.
 
 Every panel's "View itinerary" link opens a long-form companion page in
 `itinerary/` — same palette, type system, eases, grain, and rail, but built
-for reading rather than snapping. Each page is one consistent sequence:
+for reading rather than pinning. Each page is one consistent sequence:
 
 1. **Hero** — the destination restated: full-bleed backdrop, ghost numeral,
    letter-rise headline, coordinates, and a one-line standfirst
@@ -81,8 +81,8 @@ index.html        markup: six place panels + fixed chrome + rail nav
 itinerary/        six long-form itinerary pages (one per destination)
 css/style.css     palette, layered gradients, eases, reveal choreography, grain
 css/itinerary.css shared itinerary layout: hero, brief, days, note, essentials
-js/main.js        photo loading with fallback, letter-splitting, 80vw text
-                  fitting, IntersectionObserver, rAF motion engine, rail/keys
+js/main.js        photo loading with fallback, letter-splitting, pinned
+                  cover-scroll + hold-zone rAF motion engine, rail/keys
 js/itinerary.js   itinerary photo slots, scroll reveals, section rail,
                   reading progress, hero parallax
 assets/fonts/     self-hosted variable woff2 (Fraunces, Instrument Sans)

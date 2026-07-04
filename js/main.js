@@ -1,7 +1,7 @@
 /* MERIDIAN — a travel catalog
-   Photography loading with graceful fallback, headline fitting,
-   snap-entry reveals, lerped scroll/pointer parallax, variable-font
-   proximity effect, rail navigation, section indicator. */
+   Photography loading with graceful fallback, pinned cover-scroll
+   transitions, entry reveals, lerped scroll/pointer parallax,
+   variable-font proximity effect, rail navigation, indicator. */
 
 (function () {
   "use strict";
@@ -64,6 +64,9 @@
   };
 
   var panels = Array.prototype.slice.call(document.querySelectorAll(".panel"));
+  var wraps = panels.map(function (p) {
+    return p.parentElement; // .panel-wrap — owns the pin/cover scroll range
+  });
   var roll = document.getElementById("indicatorRoll");
   var place = document.getElementById("indicatorPlace");
   var a11y = document.getElementById("indicatorA11y");
@@ -139,36 +142,16 @@
   });
 
   /* ----------------------------------------------------------
-     Fit each headline to 80% of the viewport width
+     Navigation — a panel's resting place is its wrapper top
+     (scrollIntoView would target the pinned position instead)
      ---------------------------------------------------------- */
-  var PROBE_SIZE = 100; // px — measure at a known size, then scale
-
-  function fitHeadlines() {
-    var target = window.innerWidth * 0.8;
-    headlines.forEach(function (h) {
-      h.style.fontSize = PROBE_SIZE + "px";
-      var measured = h.scrollWidth;
-      if (measured > 0) {
-        h.style.fontSize = (PROBE_SIZE * target) / measured + "px";
-      }
+  function scrollToIndex(i) {
+    window.scrollTo({
+      top: wraps[i].offsetTop,
+      behavior: REDUCED ? "auto" : "smooth",
     });
   }
 
-  var resizeRaf = null;
-  window.addEventListener("resize", function () {
-    if (resizeRaf) cancelAnimationFrame(resizeRaf);
-    resizeRaf = requestAnimationFrame(fitHeadlines);
-  });
-
-  fitHeadlines();
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(fitHeadlines);
-  }
-  window.addEventListener("load", fitHeadlines);
-
-  /* ----------------------------------------------------------
-     Rail navigation
-     ---------------------------------------------------------- */
   var railItems = panels.map(function (panel, i) {
     var btn = document.createElement("button");
     btn.className = "rail__item";
@@ -179,7 +162,7 @@
       ("0" + (i + 1)).slice(-2) + " — " + panel.dataset.place.split(",")[0] +
       '</span><span class="rail__tick" aria-hidden="true"></span>';
     btn.addEventListener("click", function () {
-      panel.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth" });
+      scrollToIndex(i);
     });
     rail.appendChild(btn);
     return btn;
@@ -192,11 +175,14 @@
     e.preventDefault();
     var dir = e.key === "ArrowDown" || e.key === "PageDown" ? 1 : -1;
     var next = Math.min(panels.length - 1, Math.max(0, activeIndex + dir));
-    panels[next].scrollIntoView({ behavior: REDUCED ? "auto" : "smooth" });
+    scrollToIndex(next);
   });
 
   /* ----------------------------------------------------------
-     Snap-entry detection → reveals + indicator + rail state
+     Active-section detection → reveals + indicator + rail state.
+     Covered panels stay fully "visible" behind the one on top,
+     so intersection ratios can't tell sections apart — the
+     active panel is whichever wrapper last crossed mid-viewport.
      ---------------------------------------------------------- */
   var activeIndex = -1;
 
@@ -232,24 +218,18 @@
     setIndicator(index);
   }
 
-  var observer = new IntersectionObserver(
-    function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          activate(panels.indexOf(entry.target));
-        }
-      });
-    },
-    { threshold: 0.55 }
-  );
+  function updateActive() {
+    var mid = window.scrollY + window.innerHeight * 0.5;
+    var idx = 0;
+    for (var i = 0; i < wraps.length; i++) {
+      if (wraps[i].offsetTop <= mid) idx = i;
+    }
+    activate(idx);
+  }
 
-  panels.forEach(function (p) {
-    observer.observe(p);
-  });
-
-  requestAnimationFrame(function () {
-    if (activeIndex === -1) activate(0);
-  });
+  window.addEventListener("scroll", updateActive, { passive: true });
+  window.addEventListener("resize", updateActive);
+  updateActive();
 
   /* Retire the scroll cue once the reader moves */
   var cueRetired = false;
@@ -268,12 +248,17 @@
   /* ----------------------------------------------------------
      Motion engine — one rAF loop, everything lerped.
 
-     Two inputs:
+     Three inputs per panel:
        pointer  (nx, ny in -0.5..0.5, eased toward the cursor)
-       scroll   (per-panel progress: 0 centered, ±1 a viewport away)
+       entry    (sp: how far below its pin the panel still is,
+                 1 a viewport away → 0 once it docks)
+       pin      (q: progress through the pinned stretch — the
+                 held beat, then being covered by the next panel)
 
-     Layer depths (px of drift at full input) — each layer moves at
-     its own rate, which is what produces the parallax depth.
+     While pinned the page appears to stand still: the imagery
+     swells inside its frame and the layers drift apart slightly.
+     Once the next panel starts sliding over (q past the hold),
+     the covered panel rises away at a fraction of scroll speed.
      ---------------------------------------------------------- */
   function lerp(a, b, t) {
     return a + (b - a) * t;
@@ -293,9 +278,10 @@
 
   var FINE_POINTER = window.matchMedia("(pointer: fine)").matches;
 
-  var layers = panels.map(function (panel) {
+  var layers = panels.map(function (panel, i) {
     return {
       panel: panel,
+      wrap: wraps[i],
       backdrop: panel.querySelector(".panel__backdrop-img"),
       plate: panel.querySelector(".panel__plate"),
       photo: panel.querySelector(".panel__photo"),
@@ -309,12 +295,21 @@
   });
 
   var vh = window.innerHeight;
+  var panelH = panels[0].offsetHeight;
   window.addEventListener("resize", function () {
     vh = window.innerHeight;
+    panelH = panels[0].offsetHeight;
   });
 
   var BASE_WGHT = 340;
   var PEAK_WGHT = 620;
+
+  /* fraction of the pinned stretch that is pure hold (50vh of
+     150vh) before the next panel starts covering this one */
+  var HOLD = 1 / 3;
+  /* how far the covered panel rises while a full viewport of new
+     panel slides over it — well under scroll speed */
+  var COVER_LIFT = 0.22;
 
   function frame() {
     pointer.x = lerp(pointer.x, FINE_POINTER ? pointer.tx : 0, 0.055);
@@ -330,36 +325,51 @@
     var shear = velocity * 0.013;
 
     layers.forEach(function (L, idx) {
-      var rect = L.panel.getBoundingClientRect();
-      // skip panels far off-screen
-      if (rect.bottom < -vh * 0.5 || rect.top > vh * 1.5) return;
+      var wr = L.wrap.getBoundingClientRect();
+      // skip panels far off-screen (either not yet entered, or
+      // long since covered and released)
+      if (wr.bottom < vh * 0.5 || wr.top > vh * 1.5) return;
 
-      var target = rect.top / vh; // 0 when snapped, ±1 a viewport away
+      var target = Math.max(wr.top, 0) / vh; // 1 a viewport below its pin → 0 docked
       L.sp = lerp(L.sp, target, 0.12);
       var sp = L.sp;
 
+      // progress through the pinned stretch: 0 as the panel docks,
+      // 1 when the next panel has fully covered it
+      var pinDur = wr.height - panelH;
+      var q = pinDur > 0 ? Math.min(1, Math.max(0, -wr.top / pinDur)) : 0;
+      // past the hold, the covered panel rises away — but far
+      // slower than the panel sliding over it (the last section
+      // is never covered, so it stays put)
+      var cover = idx < layers.length - 1
+        ? Math.max(0, (q - HOLD) / (1 - HOLD))
+        : 0;
+      L.panel.style.transform = cover > 0.001
+        ? "translate3d(0," + (-cover * COVER_LIFT * vh).toFixed(1) + "px,0)"
+        : "";
+
       if (L.backdrop) {
         L.backdrop.style.transform =
-          "scale(" + (1.06 + Math.abs(sp) * 0.05).toFixed(4) + ") translate3d(" +
+          "scale(" + (1.06 + sp * 0.05 + q * 0.05).toFixed(4) + ") translate3d(" +
           px * -14 + "px," + (py * -10 + sp * -0.04 * vh) + "px,0)";
       }
       if (L.plate) {
         L.plate.style.transform =
-          "translate3d(" + px * 20 + "px," + (py * 14 + sp * 0.06 * vh) + "px,0)";
+          "translate3d(" + px * 20 + "px," + (py * 14 + sp * 0.06 * vh - q * 0.04 * vh) + "px,0)";
       }
       if (L.photo) {
-        // inner counter-drift gives the plate a window-like depth,
-        // and the image swells inside its clip while in flight,
-        // settling back to rest as the section snaps
+        // inner counter-drift gives the plate a window-like depth;
+        // the image swells inside its clip while in flight, then
+        // keeps slowly growing through the pinned hold
         L.photo.style.translate = px * -16 + "px " + (py * -12 + sp * -0.05 * vh) + "px";
-        L.photo.style.scale = (1 + Math.min(0.14, Math.abs(sp) * 0.16)).toFixed(4);
+        L.photo.style.scale = (1 + Math.min(0.14, sp * 0.16) + q * 0.12).toFixed(4);
       }
       if (L.ghost) {
-        L.ghost.style.translate = px * 42 + "px " + (py * 30 + sp * 0.16 * vh) + "px";
+        L.ghost.style.translate = px * 42 + "px " + (py * 30 + sp * 0.16 * vh - q * 0.1 * vh) + "px";
       }
       if (L.content) {
         L.content.style.transform =
-          "translate3d(" + px * -10 + "px," + (py * -7 + sp * -0.09 * vh) + "px,0)";
+          "translate3d(" + px * -10 + "px," + (py * -7 + sp * -0.09 * vh - q * 0.025 * vh) + "px,0)";
       }
       if (L.city) {
         L.city.style.transform = "skewY(" + shear.toFixed(3) + "deg)";
