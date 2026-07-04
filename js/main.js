@@ -13,8 +13,7 @@
      fails the section keeps its gradient plate. To art-direct a
      section, edit its list here.
 
-     Primary: bespoke images generated with Higgsfield (Soul v2),
-     art-directed to the catalog's dark tonal palette. `src` feeds
+     Primary: bespoke art-directed images, dark tonal palette. `src` feeds
      the plate, `backdrop` (lightweight webp) feeds the blurred
      full-bleed layer. Fallbacks: Unsplash CDN hotlinks, then the
      tonal gradient.
@@ -26,7 +25,6 @@
     return {
       src: HF + file + ".png",
       backdrop: HF + file + "_min.webp",
-      credit: "Imagery — Higgsfield AI",
     };
   }
   function un(idOrUrl) {
@@ -92,7 +90,7 @@
       probe.onload = function () {
         photo.src = c.src;
         backdrop.src = c.backdrop || c.src;
-        if (credit && c.credit) credit.textContent = c.credit;
+        if (credit) credit.textContent = c.credit || "";
         panel.classList.add("has-photo");
       };
       probe.onerror = tryNext;
