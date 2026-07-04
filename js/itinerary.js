@@ -1,7 +1,7 @@
 /* MERIDIAN — itinerary pages
-   Photography loading with graceful fallback, headline fitting,
-   entry + scroll reveals, reading progress, section rail,
-   pointer/scroll parallax on the hero. */
+   Photography loading with graceful fallback, entry + scroll
+   reveals, reading progress, section rail, pointer/scroll
+   parallax on the hero. */
 
 (function () {
   "use strict";
@@ -13,14 +13,14 @@
      Imagery — candidates are tried in order; if every candidate
      fails, the slot keeps its tonal gradient. Keys are
      "<city>:<slot>"; the hero slot reuses the catalog's plates,
-     the day slots are bespoke Higgsfield (Soul v2) images
-     art-directed to the same dark palette.
+     the day slots are bespoke images art-directed to the same
+     dark palette.
      ---------------------------------------------------------- */
   var HF = "https://d8j0ntlcm91z4.cloudfront.net/user_3D4FWlRHKNDsjbcrqPS1P5WL27Z/";
   var IMG_PARAMS = "auto=format&fit=crop&q=80&w=1600";
 
   function hf(file) {
-    return { src: HF + file + ".png", credit: "Imagery — Higgsfield AI" };
+    return { src: HF + file + ".png" }; // bespoke plates carry no credit line
   }
   function un(id) {
     return {
@@ -155,7 +155,7 @@
   });
 
   /* ----------------------------------------------------------
-     Headline — letter split + fit to 80% viewport width
+     Headline — letter split for the staggered rise
      ---------------------------------------------------------- */
   var headline = document.querySelector(".hero__city");
   if (headline) {
@@ -174,27 +174,6 @@
       headline.appendChild(outer);
     });
   }
-
-  var PROBE_SIZE = 100;
-  function fitHeadline() {
-    if (!headline) return;
-    var target = window.innerWidth * 0.8;
-    headline.style.fontSize = PROBE_SIZE + "px";
-    var measured = headline.scrollWidth;
-    if (measured > 0) {
-      headline.style.fontSize = (PROBE_SIZE * target) / measured + "px";
-    }
-  }
-  var resizeRaf = null;
-  window.addEventListener("resize", function () {
-    if (resizeRaf) cancelAnimationFrame(resizeRaf);
-    resizeRaf = requestAnimationFrame(fitHeadline);
-  });
-  fitHeadline();
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(fitHeadline);
-  }
-  window.addEventListener("load", fitHeadline);
 
   /* Hero entrance */
   requestAnimationFrame(function () {

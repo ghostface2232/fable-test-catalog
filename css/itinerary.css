@@ -403,7 +403,7 @@ body[data-city="paris"] .hero {
   white-space: nowrap;
   color: var(--ink);
   text-shadow: 0 2px 60px rgba(8, 7, 9, 0.45);
-  font-size: 14vw; /* fallback before JS fit runs */
+  font-size: 9.5rem; /* one fixed size shared by every city */
   cursor: default;
 }
 .hero__city .ch {
@@ -1056,6 +1056,14 @@ body[data-city="paris"]    .plate { background: linear-gradient(194deg, #3a3a44 
   }
   .rail__item.is-active .rail__tick {
     transform: scaleX(1.6);
+  }
+}
+
+/* matches the catalog's headline breakpoint so the shared fixed
+   size stays identical across both pages */
+@media (max-width: 720px) {
+  .hero__city {
+    font-size: 3.4rem;
   }
 }
 

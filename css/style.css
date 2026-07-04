@@ -1,7 +1,7 @@
 /* ============================================================
    MERIDIAN — a travel catalog
-   Dark tonal palette · scroll-snap · layered photography ·
-   custom-ease motion system · film grain
+   Dark tonal palette · pinned cover-scroll panels · layered
+   photography · custom-ease motion system · film grain
    ============================================================ */
 
 /* Self-hosted variable fonts (latin subset, from Google Fonts) */
@@ -59,7 +59,6 @@
 }
 
 html {
-  scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   background: #0c0b0d;
 }
@@ -82,15 +81,42 @@ body {
 }
 
 /* ------------------------------------------------------------
-   Panels — one place per 100vh section
+   Panels — one place per section, pinned inside a taller wrapper.
+
+   Each wrapper is 250vh: the panel stays pinned for the extra
+   150vh. The first 50vh of the pin is the held beat (the page
+   appears to stand still while the imagery drifts and swells);
+   the next wrapper overlaps by 100vh, so its panel slides up at
+   scroll speed and covers the pinned one, which the motion engine
+   lets rise away far slower than the scroll.
    ------------------------------------------------------------ */
 
-.panel {
+.panel-wrap {
   position: relative;
+  height: 250vh;
+  height: 250svh;
+}
+.panel-wrap + .panel-wrap {
+  margin-top: -100vh;
+  margin-top: -100svh;
+}
+.panel-wrap:last-child {
+  height: 150vh;
+  height: 150svh;
+}
+/* later panels stack above the ones they cover */
+.panel-wrap:nth-child(1) { z-index: 1; }
+.panel-wrap:nth-child(2) { z-index: 2; }
+.panel-wrap:nth-child(3) { z-index: 3; }
+.panel-wrap:nth-child(4) { z-index: 4; }
+.panel-wrap:nth-child(5) { z-index: 5; }
+.panel-wrap:nth-child(6) { z-index: 6; }
+
+.panel {
+  position: sticky;
+  top: 0;
   height: 100vh;
   height: 100svh;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -294,7 +320,7 @@ body {
   color: var(--section-accent, var(--accent));
 }
 
-/* Oversized headline — JS fits it to 80% of viewport width */
+/* Oversized headline — one fixed size shared by every city */
 .panel__city {
   font-family: var(--font-display);
   font-weight: 340;
@@ -304,7 +330,7 @@ body {
   white-space: nowrap;
   color: var(--ink);
   text-shadow: 0 2px 60px rgba(8, 7, 9, 0.45);
-  font-size: 14vw; /* fallback before JS fit runs */
+  font-size: 9.5rem;
   cursor: default;
 }
 
@@ -728,6 +754,9 @@ body {
   .panel__ghost {
     font-size: 26vh;
     top: 8vh;
+  }
+  .panel__city {
+    font-size: 3.4rem;
   }
   .chrome__note,
   .scroll-cue {
