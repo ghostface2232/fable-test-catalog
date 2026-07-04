@@ -304,9 +304,9 @@
   var BASE_WGHT = 340;
   var PEAK_WGHT = 620;
 
-  /* fraction of the pinned stretch that is pure hold (50vh of
-     150vh) before the next panel starts covering this one */
-  var HOLD = 1 / 3;
+  /* fraction of the pinned stretch that is pure hold (100vh of
+     200vh) before the next panel starts covering this one */
+  var HOLD = 1 / 2;
   /* how far the covered panel rises while a full viewport of new
      panel slides over it — well under scroll speed */
   var COVER_LIFT = 0.22;

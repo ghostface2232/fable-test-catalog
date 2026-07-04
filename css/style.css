@@ -83,8 +83,8 @@ body {
 /* ------------------------------------------------------------
    Panels — one place per section, pinned inside a taller wrapper.
 
-   Each wrapper is 250vh: the panel stays pinned for the extra
-   150vh. The first 50vh of the pin is the held beat (the page
+   Each wrapper is 300vh: the panel stays pinned for the extra
+   200vh. The first 100vh of the pin is the held beat (the page
    appears to stand still while the imagery drifts and swells);
    the next wrapper overlaps by 100vh, so its panel slides up at
    scroll speed and covers the pinned one, which the motion engine
@@ -93,16 +93,16 @@ body {
 
 .panel-wrap {
   position: relative;
-  height: 250vh;
-  height: 250svh;
+  height: 300vh;
+  height: 300svh;
 }
 .panel-wrap + .panel-wrap {
   margin-top: -100vh;
   margin-top: -100svh;
 }
 .panel-wrap:last-child {
-  height: 150vh;
-  height: 150svh;
+  height: 200vh;
+  height: 200svh;
 }
 /* later panels stack above the ones they cover */
 .panel-wrap:nth-child(1) { z-index: 1; }
