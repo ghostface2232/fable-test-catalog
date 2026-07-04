@@ -738,12 +738,16 @@ body {
   .panel__ghost,
   .panel__photo,
   .panel__plate-clip,
-  .panel__backdrop,
-  .indicator__roll {
+  .panel__backdrop {
     transition: opacity 0.3s ease !important;
     transform: none !important;
     clip-path: none !important;
     filter: none !important;
+  }
+  /* the roll's translateY carries the current section number —
+     keep the state, drop only the animation */
+  .indicator__roll {
+    transition: none !important;
   }
   .grain,
   .scroll-cue__line {
