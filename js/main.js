@@ -282,6 +282,8 @@
   }
 
   var pointer = { tx: 0, ty: 0, x: 0, y: 0 };
+  var lastScrollY = window.scrollY;
+  var velocity = 0; // lerped px/frame, drives the headline shear
   window.addEventListener(
     "mousemove",
     function (e) {
@@ -322,6 +324,13 @@
     var px = pointer.x;
     var py = pointer.y;
 
+    // scroll velocity → gentle shear on the headline (max ~1°)
+    var sy = window.scrollY;
+    var rawVel = Math.max(-80, Math.min(80, sy - lastScrollY));
+    lastScrollY = sy;
+    velocity = lerp(velocity, rawVel, 0.09);
+    var shear = velocity * 0.013;
+
     layers.forEach(function (L, idx) {
       var rect = L.panel.getBoundingClientRect();
       // skip panels far off-screen
@@ -333,15 +342,19 @@
 
       if (L.backdrop) {
         L.backdrop.style.transform =
-          "scale(1.06) translate3d(" + px * -14 + "px," + (py * -10 + sp * -0.04 * vh) + "px,0)";
+          "scale(" + (1.06 + Math.abs(sp) * 0.05).toFixed(4) + ") translate3d(" +
+          px * -14 + "px," + (py * -10 + sp * -0.04 * vh) + "px,0)";
       }
       if (L.plate) {
         L.plate.style.transform =
           "translate3d(" + px * 20 + "px," + (py * 14 + sp * 0.06 * vh) + "px,0)";
       }
-      if (L.photo && L.panel.classList.contains("is-active")) {
-        // inner counter-drift gives the plate a window-like depth
-        L.photo.style.translate = px * -16 + "px " + (py * -12 + sp * -0.035 * vh) + "px";
+      if (L.photo) {
+        // inner counter-drift gives the plate a window-like depth,
+        // and the image swells inside its clip while in flight,
+        // settling back to rest as the section snaps
+        L.photo.style.translate = px * -16 + "px " + (py * -12 + sp * -0.05 * vh) + "px";
+        L.photo.style.scale = (1 + Math.min(0.14, Math.abs(sp) * 0.16)).toFixed(4);
       }
       if (L.ghost) {
         L.ghost.style.translate = px * 42 + "px " + (py * 30 + sp * 0.16 * vh) + "px";
@@ -349,6 +362,9 @@
       if (L.content) {
         L.content.style.transform =
           "translate3d(" + px * -10 + "px," + (py * -7 + sp * -0.09 * vh) + "px,0)";
+      }
+      if (L.city) {
+        L.city.style.transform = "skewY(" + shear.toFixed(3) + "deg)";
       }
 
       /* Variable-weight proximity — letters swell toward the cursor */
