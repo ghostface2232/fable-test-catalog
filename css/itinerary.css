@@ -418,7 +418,7 @@ body[data-city="paris"] .hero {
   transform: translateY(calc(100% + 0.4em));
   transition: transform 1.7s var(--e-mass);
   transition-delay: calc(0.32s + var(--ci, 0) * 0.055s);
-  will-change: transform;
+  will-change: transform, font-variation-settings;
 }
 .hero.is-active .hero__city .ch__in {
   transform: translateY(0);

@@ -292,6 +292,15 @@
     vh = window.innerHeight;
   });
 
+  /* Variable-weight proximity — letters swell toward the cursor,
+     same effect as the catalog headlines */
+  var letters = headline
+    ? Array.prototype.slice.call(headline.querySelectorAll(".ch__in"))
+    : [];
+  var weights = null; // lazy — filled on first proximity pass
+  var BASE_WGHT = 340;
+  var PEAK_WGHT = 620;
+
   function frame() {
     pointer.x = lerp(pointer.x, FINE_POINTER ? pointer.tx : 0, 0.055);
     pointer.y = lerp(pointer.y, FINE_POINTER ? pointer.ty : 0, 0.055);
@@ -313,6 +322,40 @@
         heroContent.style.transform =
           "translate3d(" + px * -10 + "px," + (py * -7 + sp * -0.12 * vh) + "px,0)";
         heroContent.style.opacity = String(Math.max(0, 1 - sp * 1.3));
+      }
+
+      if (FINE_POINTER && letters.length) {
+        if (!weights) {
+          weights = letters.map(function () {
+            return BASE_WGHT;
+          });
+        }
+        var mx = pointer.tx * window.innerWidth + window.innerWidth / 2;
+        var my = pointer.ty * vh + vh / 2;
+        var cityRect = headline.getBoundingClientRect();
+        var near =
+          my > cityRect.top - vh * 0.12 &&
+          my < cityRect.bottom + vh * 0.12;
+
+        letters.forEach(function (span, i) {
+          var targetW = BASE_WGHT;
+          if (near) {
+            var r = span.getBoundingClientRect();
+            var cx = r.left + r.width / 2;
+            var d = Math.abs(mx - cx);
+            var radius = Math.max(200, cityRect.width * 0.24);
+            if (d < radius) {
+              var t = 1 - d / radius;
+              t = t * t * (3 - 2 * t); // smoothstep falloff
+              targetW = BASE_WGHT + (PEAK_WGHT - BASE_WGHT) * t;
+            }
+          }
+          var w = lerp(weights[i], targetW, 0.14);
+          if (Math.abs(w - weights[i]) > 0.5) {
+            weights[i] = w;
+            span.style.fontVariationSettings = '"opsz" 144, "wght" ' + w.toFixed(0);
+          }
+        });
       }
     }
 
