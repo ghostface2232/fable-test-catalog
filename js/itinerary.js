@@ -126,6 +126,9 @@
         img.src = c.src;
         if (credit && c.credit) credit.textContent = c.credit;
         holder.classList.add("has-photo");
+        /* the hero's reveal selector lives on .hero itself */
+        var heroHost = holder.closest(".hero");
+        if (heroHost) heroHost.classList.add("has-photo");
       };
       probe.onerror = tryNext;
       probe.src = c.src;
